@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Métropole Européenne de Lille – Exemple de page</title>
+  <!-- Lien vers la feuille de style, si tu en as une -->
+  <link rel="stylesheet" href="../static/style.css">
+  <!-- Bibliothèque protobuf (pour décoder GTFS-RT) -->
+  <script src="https://cdn.jsdelivr.net/npm/protobufjs/dist/protobuf.min.js"></script>
+  <script src="../../backend/server.js"></script>
+  <script>
+    async function fetchGTFSData() {
+        try {
+            const response = await fetch("/api/gtfs");
+            const result = await response.json();
+            const { lastUpdated, data } = result;
+
+            document.getElementById("lastUpdated").innerText = `Dernière mise à jour : ${new Date(lastUpdated).toLocaleTimeString()}`;
+
+            let tripsHtml = "<h2>Trajets</h2>";
+            data.trips.forEach(trip => {
+                tripsHtml += `<div><strong>Trajet ID:</strong> ${trip.trip_id}<ul>`;
+                trip.stops.forEach(stop => {
+                    tripsHtml += `<li><strong>${stop.stop_name}</strong> (${stop.stop_desc})<br>
+                                  Arrêt ID: ${stop.stop_id} <br>
+                                  Arrivée: ${stop.arrival_time}, Départ: ${stop.departure_time} <br>
+                                  Coordonnées: ${stop.geom || "Non disponible"}
+                                  </li>`;
+                });
+                tripsHtml += `</ul></div>`;
+            });
+            document.getElementById("trips").innerHTML = tripsHtml;
+        } catch (err) {
+            console.error("Erreur lors de la récupération des données :", err);
+        }
+    }
+
+    setInterval(fetchGTFSData, 30000);
+    window.onload = fetchGTFSData;
+</script>
+</head>
+<body>  
+  <header>
+    <div class="logo">
+      <img src="../image/logomel.png" alt="Logo de la Métropole Européenne de Lille">
+      <strong>MÉTROPOLE EUROPÉENNE DE LILLE</strong>
+    </div>
+    <nav>
+      <ul>
+        <div class="Title-Article">
+          <li><a href="#">Accueil</a></li>
+          <li><a href="#">Les lignes ▾</a>
+              <ul>
+                <li><a href="#">Métro Ligne 1</a></li>
+                <li><a href="#">Métro Ligne 2</a></li>
+                <li><a href="#">Tramway Ligne R</a></li>
+                <li><a href="#">Tramway Ligne T</a></li>
+              </ul>
+          </li>
+          <li><a href="#">En temps réel</a></li>
+          <li><a href="#">Les travaux</a></li>
+          <li><a href="#"> Quelques articles</a>
+            <ul>
+              <li><a href="article1.html">Article 1</a></li>
+              <li><a href="article2.html">Article 2</a></li>
+              <li><a href="article3.html">Article 3</a></li>
+            </ul>
+          </li>
+        </div>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <!--Affichage des informations en temps réel-->
+    <h1>Informations en temps réel</h1>
+    <p id="lastUpdated">Chargement...</p>
+    <div id="trips"></div>
+    <!--Fin affichage des informations en temps réel-->
+    <section class="banner">
+      <img src="../image/imgmetro.png" alt="Photo du métro de Lille">
+    </section>
+
+    <section>
+      <h2>Temps réel du métro</h2>
+
+      <!-- Sélection de la ligne de métro -->
+      <div class="select-line">
+        <label for="metroLine">Ligne :</label>
+        <select id="metroLine">
+          <option value="1">Métro Ligne 1</option>
+          <option value="2">Métro Ligne 2</option>
+        </select>
+      </div>
+
+      <!-- Sélection de la direction, dépendante de la ligne -->
+      <div class="select-direction">
+        <label for="metroDirection">Direction :</label>
+        <select id="metroDirection">
+          <!-- Valeurs par défaut pour la ligne 1 -->
+          <option value="chu">CHU-Eurasanté</option>
+          <option value="4cantons">4 Cantons</option>
+        </select>
+      </div>
+
+      <!-- Sélection de l'arrêt -->
+      <div class="select-stop">
+        <label for="metroStop">Arrêt :</label>
+        <select id="metroStop">
+          <!-- Valeurs par défaut si la ligne 1 et direction 'chu' -->
+          <option value="CHR-Calmette">CHR B Calmette</option>
+          <option value="PorteDesPostes">Porte des Postes</option>
+          <option value="Republique">République Beaux-Arts</option>
+        </select>
+      </div>
+
+      <button id="searchBtn">Rechercher en temps réel</button>
+    </section>
+
+    <section id="data" style="margin-top: 2rem;">
+      <!-- Les informations temps réel seront injectées ici -->
+    </section>
+
+  </main>
+
+  <footer>
+    <p>&copy; 2025 Métropole Européenne de Lille – Ceci est un exemple</p>
+  </footer>
+</body>
+</html>
