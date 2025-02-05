@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+
+    <link rel="stylesheet" href="../static/style.css">
+    <title>Ligne 2 - Métro Lille</title> 
+
+    <script>
+        async function fetchStationsLigne2() {
+            try {
+                const response = await fetch("/api/stations_metro");
+                const stations = await response.json();
+                const stationsLigne2 = stations.filter(station => station.ligne === "2"); // Filtrer les stations de la ligne 2
+
+                // Initialiser la carte avec Leaflet
+                const map = L.map('map').setView([50.62925, 3.057256], 13); // Centrer sur Lille
+
+                // Ajouter une couche de tuiles (carte OpenStreetMap)
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                }).addTo(map);
+
+                // Fonction pour récupérer l'adresse depuis les coordonnées
+                async function getAddressFromCoordinates(lat, lon) {
+                    try {
+                        const response = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`);
+                        const data = await response.json();
+                        return data.display_name || "Adresse non disponible"; // Renvoyer l'adresse ou un message par défaut
+                    } catch (error) {
+                        console.error("Erreur lors de la récupération de l'adresse :", error);
+                        return "Adresse non disponible";
+                    }
+                }
+
+                // Ajouter les stations comme des marqueurs sur la carte
+                stationsLigne2.forEach(station => {
+                    const coord = station.coordinates; // coord[0] = lon, coord[1] = lat
+                    L.marker([coord[1], coord[0]]) // Latitude, Longitude (coordonnée inversée)
+                        .addTo(map)
+                        .bindTooltip(station.nom_statio) // Afficher le nom de la station au survol
+                        .on('click', async function () {
+                            const address = await getAddressFromCoordinates(coord[1], coord[0]); // Récupérer l'adresse
+                            document.getElementById("stationsLigne2").innerHTML = `
+                                <h2>Informations de la station</h2>
+                                <div>
+                                    <strong>${station.nom_statio}</strong> (${station.commune})<br>
+                                    Ligne: ${station.ligne} <br>
+                                    Adresse: ${address} <br>
+                                </div>
+                            `;
+                        });
+                });
+            } catch (err) {
+                console.error("Erreur lors de la récupération des stations de métro :", err);
+            }
+        }
+
+        window.onload = () => {
+            fetchStationsLigne2(); // Charger les stations de la ligne 2 à l'ouverture de la page
+        };
+    </script>
+
+    <style>
+        #map {
+            width: 100%;
+            height: 400px;  /* Hauteur définie pour afficher la carte */
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+
+<header>
+    <div class="logo">
+      <img src="../image/logomel.jpg" alt="Logo de la Métropole Européenne de Lille">
+    </div>
+    <nav>
+        <ul>
+          <div class="Title-Article">
+            <li><a href="./">Accueil</a></li>
+            <li><a>Les lignes ▾</a>
+                <ul>
+                  <li><a href="./ligne1.html">Métro Ligne 1</a></li>
+                  <li><a href="./ligne2.html">Métro Ligne 2</a></li>
+                </ul>
+            </li>
+            <li><a href="./bus.html">Bus en temps réel</a></li>
+            <li><a> Les travaux ▾</a>
+              <ul>
+                <li><a href="./article1.html">Euralille 3000</a></li>
+                <li><a href="./article2.html">15 nouvelles rames...</a></li>
+                <li><a href="./article3.html">Ligne 1 du métro...</a></li>
+              </ul>
+            </li>
+          </div>
+        </ul>
+      </nav>
+</header>
+<body>
+    <!-- Conteneur de la carte Leaflet -->
+    <div id="map"></div>
+
+    <!-- Conteneur pour afficher les informations de la station -->
+    <div id="stationsLigne2"></div> <!-- Informations détaillées des stations -->
+</body>
+
+<footer>
+    <p>&copy; 2025 Métropole Européenne de Lille – Ceci est un exemple</p>
+</footer>
+</html>
