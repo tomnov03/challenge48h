@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>En temps réel - V'Lille</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <link rel="stylesheet" href="../static/vlille.css">
+    <link rel="stylesheet" href="../static/header.css">
+    <link rel="stylesheet" href="../static/footer.css">
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <style>
+        #map { width: 100%; height: 500px; margin-bottom: 20px; }
+        #vlilleInfo { padding: 10px; border: 1px solid #ddd; background: #f9f9f9; margin-top: 20px; }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="header-container">
+            <div class="logo">
+                <img src="../image/logomel.jpg" alt="Logo de la Métropole Européenne de Lille">
+            </div>
+            <nav>
+                <ul class="nav-menu">
+                  <li><a href="./" >Accueil</a></li>
+                    <li class="dropdown">
+                        <a>Actualité ▾</a>
+                        <ul class="dropdown-menu">
+                            <li><a href="./article1.html">Euralille 3000</a></li>
+                            <li><a href="./article2.html">15 nouvelles rames...</a></li>
+                            <li><a href="./article3.html">Ligne 1 du métro...</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a>Les lignes ▾</a>
+                        <ul class="dropdown-menu">
+                            <li class="subheader">Métro</li>
+                            <li><a href="./ligne1.html">Métro Ligne 1</a></li>
+                            <li><a href="./ligne2.html">Métro Ligne 2</a></li>
+                            <li class="subheader">Bus</li>
+                            <li><a href="./bus.html">En direct</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a class="active">Infos Pratiques ▾</a>
+                        <ul class="dropdown-menu">
+                            <li class="subheader">V'Lille</li>
+                            <li><a href="./vlille.html">Trouver un V'Lille</a></li>
+                            <li class="subheader">Parking</li>
+                            <li><a href="./parkings.html">Trouver une place de parking</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="./contact.html">Contact</a></li>
+                </ul>
+            </nav>
+        </div>
+      </header>
+
+    <h1>Disponibilité des vélos et des places de vélos en libre service</h1>
+
+    <div id="map"></div>
+
+    <div id="vlilleInfo">
+        <h3>Stations V'Lille disponibles :</h3>
+        <ul id="vlilleList">Chargement...</ul>
+    </div>
+
+    <script>
+        let map = L.map('map').setView([50.62925, 3.057256], 13);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        let vlilleLayer = L.layerGroup().addTo(map);
+
+        async function fetchVlilleData() {
+            try {
+                const response = await fetch("/api/vlille");
+                const result = await response.json();
+                
+                let vlilleList = document.getElementById("vlilleList");
+                vlilleList.innerHTML = ""; // Réinitialisation
+
+                vlilleLayer.clearLayers();
+
+                result.features.forEach(station => {
+                    let { nom, adresse, nb_velos_dispo, nb_places_dispo, etat_connexion } = station.properties;
+                    let [lat, lng] = [station.geometry.coordinates[1], station.geometry.coordinates[0]]; // Correction lat/lng
+
+                    let markerColor = etat_connexion === "DÉCONNECTÉ" ? "red" : "green";
+
+                    let marker = L.circleMarker([lat, lng], {
+                        color: markerColor,
+                        radius: 8,
+                        fillOpacity: 0.8
+                    }).addTo(vlilleLayer);
+
+                    marker.bindPopup(`
+                        <strong>${nom}</strong><br>
+                        📍 Adresse : ${adresse}<br>
+                        🚲 Vélos disponibles : ${nb_velos_dispo}<br>
+                        🅿️ Places disponibles : ${nb_places_dispo}<br>
+                        🔌 Connexion : ${etat_connexion}
+                    `);
+
+                    // Ajout de la station dans la liste sous la map
+                    vlilleList.innerHTML += `
+                        <li><strong>${nom}</strong> - 🚲 ${nb_velos_dispo} vélos | 🅿️ ${nb_places_dispo} places</li>
+                    `;
+                });
+
+            } catch (err) {
+                console.error("❌ Erreur récupération V'Lille :", err);
+                document.getElementById("vlilleList").innerHTML = "<li>Erreur lors du chargement des données.</li>";
+            }
+        }
+
+        fetchVlilleData();
+        setInterval(fetchVlilleData, 30000);
+    </script>
+
+</body>
+</html>

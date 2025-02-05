@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>En temps réel - Bus Lille</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <link rel="stylesheet" href="../static/bus.css">
+    <link rel="stylesheet" href="../static/header.css">
+    <link rel="stylesheet" href="../static/footer.css">
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <style>
+        #map { width: 100%; height: 500px; margin-bottom: 20px; }
+        label { display: block; cursor: pointer; margin: 5px 0; }
+        #lineInfo { margin-top: 20px; padding: 10px; border: 1px solid #ddd; background: #f9f9f9; }
+    </style>
+</head>
+<header>
+    <div class="header-container">
+        <div class="logo">
+            <img src="../image/logomel.jpg" alt="Logo de la Métropole Européenne de Lille">
+        </div>
+        <nav>
+            <ul class="nav-menu">
+              <li><a href="./" >Accueil</a></li>
+                <li class="dropdown">
+                    <a>Actualité ▾</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="./article1.html">Euralille 3000</a></li>
+                        <li><a href="./article2.html">15 nouvelles rames...</a></li>
+                        <li><a href="./article3.html">Ligne 1 du métro...</a></li>
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a class="active">Les lignes ▾</a>
+                    <ul class="dropdown-menu">
+                        <li class="subheader">Métro</li>
+                        <li><a href="./ligne1.html">Métro Ligne 1</a></li>
+                        <li><a href="./ligne2.html">Métro Ligne 2</a></li>
+                        <li class="subheader">Bus</li>
+                        <li><a href="./bus.html">En direct</a></li>
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a>Infos Pratiques ▾</a>
+                    <ul class="dropdown-menu">
+                        <li class="subheader">V'Lille</li>
+                        <li><a href="./vlille.html">Trouver un V'Lille</a></li>
+                        <li class="subheader">Parking</li>
+                        <li><a href="./parkings.html">Trouver une place de parking</a></li>
+                    </ul>
+                </li>
+                <li><a href="./contact.html">Contact</a></li>
+            </ul>
+        </nav>
+    </div>
+  </header>
+  <body>
+    <div id="content">
+        <h1>Informations en temps réel</h1>
+        <p id="lastUpdated">Chargement...</p>
+        <h1>Carte des Lignes de Bus</h1>
+    
+        <div class="bus-lines-grid" id="busLines"></div>
+    
+        <div id="info-map-container">
+            <div id="busInfo">
+                <h3>Sélectionnez une ligne :</h3>
+                <div id="lineInfo">
+                    <h3>Informations sur la ligne sélectionnée :</h3>
+                    <p>Sélectionnez une ligne pour voir les détails.</p>
+                </div>
+            </div>
+    
+            <div id="map-container">
+                <div id="map"></div>
+            </div>
+        </div>
+    </div>
+</body>
+<footer class="footer">
+    <div class="footer-content">
+      <!-- Section de gauche : Informations -->
+      <div class="footer-section">
+        <h3>Métropole Européenne de Lille</h3>
+        <p>&copy; 2025 Métropole Européenne de Lille – Ceci est un exemple</p>
+        <p>Contactez-nous : <a href="mailto:contact@example.com">contact@example.com</a></p>
+      </div>
+  
+      <!-- Section du milieu : Liens utiles -->
+      <div class="footer-section">
+        <h3>Liens utiles</h3>
+        <ul>
+          <li><a href="#">Accueil</a></li>
+          <li><a href="#">Actualités</a></li>
+          <li><a href="#">Services</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+      </div>
+  
+      <!-- Section de droite : Réseaux sociaux -->
+      <div class="footer-section">
+        <h3>Suivez-nous</h3>
+        <div class="social-icons">
+          <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+          <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+          <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+          <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+        </div>
+      </div>
+    </div>
+  
+    <!-- Barre du bas -->
+    <div class="footer-bottom">
+      <p>Conçu par les étudiants chez Ynov Campus</p>
+    </div>
+  </footer>
+    <script>
+        let map = L.map('map').setView([50.62925, 3.057256], 12);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        let markersLayer = L.layerGroup().addTo(map);
+        let routeLayer = L.layerGroup().addTo(map);
+        let busData = [];
+        let uniqueLines = new Set();
+
+        async function fetchGTFSData() {
+          try {
+              const response = await fetch("/api/gtfs");
+              const result = await response.json();
+      
+              console.log("📌 Debug API Response:", result); // 🔍 Vérifier les données reçues
+      
+              const { lastUpdated, data } = result;
+              if (!lastUpdated) {
+                  console.warn("⚠️ lastUpdated est vide !");
+                  return;
+              }
+      
+              document.getElementById("lastUpdated").innerText = `Dernière mise à jour : ${new Date(lastUpdated).toLocaleString("fr-FR")}`;
+          } catch (err) {
+              console.error("❌ Erreur lors de la récupération des données GTFS :", err);
+          }
+      }
+      
+      // Appeler la fonction après le chargement de la page
+      document.addEventListener("DOMContentLoaded", function () {
+          fetchGTFSData(); 
+          fetchBusStops();
+      });
+
+      
+      async function fetchBusStops() {
+    try {
+        const response = await fetch("/api/matched_stops");
+        const data = await response.json();
+
+        if (data.error) {
+            document.getElementById("busLines").innerHTML = `<p>${data.error}</p>`;
+            return;
+        }
+
+        busData = data.matchedStops;
+        uniqueLines.clear(); // Réinitialisation
+
+        // 📌 Extraire toutes les lignes uniques
+        busData.forEach(stop => {
+            if (stop.code_ligne && stop.code_ligne !== "Non disponible") {
+                stop.code_ligne.split(",").forEach(line => uniqueLines.add(line.trim()));
+            }
+        });
+
+        // 📌 Générer les logos des lignes de bus
+        const busLinesDiv = document.getElementById("busLines");
+        busLinesDiv.innerHTML = "";
+        uniqueLines.forEach(line => {
+            busLinesDiv.innerHTML += `
+                <img src="../image/logo/${line}.svg" alt="Ligne ${line}" 
+                    class="bus-line-icon" onclick="toggleLineSelection('${line}', this)">
+            `;
+        });
+
+    } catch (error) {
+        console.error("❌ Erreur récupération des données :", error);
+        document.getElementById("busLines").innerHTML = `<p>Erreur de chargement</p>`;
+    }
+}
+
+/**
+ * 🖱️ Sélectionne/Désélectionne une ligne au clic sur le logo
+ */
+function toggleLineSelection(selectedLine, element) {
+    // Vérifie si la ligne est déjà sélectionnée
+    if (element.classList.contains("selected")) {
+        element.classList.remove("selected");
+        clearLineSelection(); // Désélectionne la ligne et enlève la carte
+    } else {
+        document.querySelectorAll(".bus-line-icon").forEach(icon => icon.classList.remove("selected"));
+        element.classList.add("selected");
+        selectLine(selectedLine);
+    }
+}
+
+/**
+ * 🔄 Efface la carte quand aucune ligne n'est sélectionnée
+ */
+function clearLineSelection() {
+    markersLayer.clearLayers();
+    routeLayer.clearLayers();
+    document.getElementById("lineInfo").innerHTML = "<h3>Aucune ligne sélectionnée</h3>";
+}
+
+/**
+ * 🔥 Sélectionner une ligne et afficher les arrêts sur la carte
+ */
+function selectLine(selectedLine) {
+    markersLayer.clearLayers();
+    routeLayer.clearLayers();
+
+    let selectedStops = busData.filter(stop => stop.code_ligne.split(",").includes(selectedLine));
+
+    if (selectedStops.length === 0) {
+        console.warn(`⚠️ Aucun arrêt trouvé pour la ligne ${selectedLine}`);
+        return;
+    }
+
+    let stopsByDirection = {};
+    selectedStops.forEach(stop => {
+        let direction = stop.sens_ligne || "Direction inconnue";
+        if (!stopsByDirection[direction]) {
+            stopsByDirection[direction] = [];
+        }
+        stopsByDirection[direction].push(stop);
+    });
+
+    let lineInfoHTML = `<h3>Informations Ligne ${selectedLine}</h3>`;
+
+    Object.keys(stopsByDirection).forEach(direction => {
+        let stops = stopsByDirection[direction];
+
+        // Trier les arrêts par heure de passage
+        stops.sort((a, b) => new Date(a.heure_estimee_depart) - new Date(b.heure_estimee_depart));
+
+        lineInfoHTML += `
+            <h4>🚏 Sens : ${direction}</h4>
+            <p><strong>Nombre d'arrêts :</strong> ${stops.length}</p>
+            <ul>
+        `;
+
+        let coords = [];
+        stops.forEach(stop => {
+            if (stop.coordonnees !== "Non disponible") {
+                coords.push([stop.coordonnees[1], stop.coordonnees[0]]);
+                L.marker([stop.coordonnees[1], stop.coordonnees[0]])
+                    .addTo(markersLayer)
+                    .bindPopup(`
+                        <strong>${stop.stop_name}</strong><br>
+                        🏙 Adresse : ${stop.adresse || "Non disponible"}<br>
+                        🕒 Départ : ${stop.departure_time || "Non disponible"}
+                    `);
+
+                lineInfoHTML += `<li><strong>${stop.stop_name}</strong> - ${stop.departure_time}</li>`;
+            }
+        });
+
+        lineInfoHTML += `</ul>`;
+
+        if (coords.length > 1) {
+            let color = getColor(selectedLine);
+            let polyline = L.polyline(coords, { color: color, weight: 5 }).addTo(routeLayer);
+        }
+    });
+
+    document.getElementById("lineInfo").innerHTML = lineInfoHTML;
+}
+
+/**
+ * 🎨 Attribution de couleurs différentes aux lignes
+ */
+function getColor(line) {
+    const colors = ["red", "blue", "green", "purple", "orange", "brown", "pink", "cyan", "magenta", "lime"];
+    let index = Array.from(uniqueLines).indexOf(line);
+    return colors[index % colors.length];
+}
+
+// 📌 Chargement initial des lignes
+fetchBusStops();
+
+
+    </script>
+
+</html>

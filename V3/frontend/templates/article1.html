@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Métropole Européenne de Lille – Exemple de page</title>
+  <link rel="stylesheet" href="../static/header.css">
+    <link rel="stylesheet" href="../static/footer.css">
+    <link rel="stylesheet" href="../static/article.css">
+  <script src="../static/server.js"></script>
+</head>
+
+
+<header>
+  <div class="header-container">
+      <div class="logo">
+          <img src="../image/logomel.jpg" alt="Logo de la Métropole Européenne de Lille">
+      </div>
+      <nav>
+          <ul class="nav-menu">
+            <li><a href="./" >Accueil</a></li>
+              <li class="dropdown">
+                  <a class="active">Actualité ▾</a>
+                  <ul class="dropdown-menu">
+                      <li><a href="./article1.html">Euralille 3000</a></li>
+                      <li><a href="./article2.html">15 nouvelles rames...</a></li>
+                      <li><a href="./article3.html">Ligne 1 du métro...</a></li>
+                  </ul>
+              </li>
+              <li class="dropdown">
+                  <a>Les lignes ▾</a>
+                  <ul class="dropdown-menu">
+                      <li class="subheader">Métro</li>
+                      <li><a href="./ligne1.html">Métro Ligne 1</a></li>
+                      <li><a href="./ligne2.html">Métro Ligne 2</a></li>
+                      <li class="subheader">Bus</li>
+                      <li><a href="./bus.html">En direct</a></li>
+                  </ul>
+              </li>
+              <li class="dropdown">
+                  <a>Infos Pratiques ▾</a>
+                  <ul class="dropdown-menu">
+                      <li class="subheader">V'Lille</li>
+                      <li><a href="./vlille.html">Trouver un V'Lille</a></li>
+                      <li class="subheader">Parking</li>
+                      <li><a href="./parkings.html">Trouver une place de parking</a></li>
+                  </ul>
+              </li>
+              <li><a href="./contact.html">Contact</a></li>
+          </ul>
+      </nav>
+  </div>
+</header>
+<body>
+  <!-- Première image -->
+  <div class="main-image-container">
+    <img src="../image/article1/img1.jpg" alt="lille 3000" class="main-image">
+  </div>
+
+  <!-- Titre et texte -->
+  <div class="content">
+    <div class="Title-Article">Euralille 3000</div>
+    <div class="First-content-text">
+      Attirer le TGV nord-européen en cœur de ville de Lille fut un coup de génie, qui continue de porter le développement de la métropole toute entière.<br><br>
+      Alors que l’opération « historique » Euralille 1, engagée en 1990 autour des deux gares et leurs TGV a été conclue, et qu’Euralille 2 s'est achevée en beauté avec l’immeuble Biotope qui a accueille le nouveau siège de la MEL depuis mars 2020, l’opération Euralille 3000 engage la densification de ce qui est désormais le 3e quartier d’affaires de France.<br>
+      Cet ambitieux projet urbain vise à intensifier la vie du quartier et à renforcer sa qualité d’usage par une plus grande mixité programmatique de commerces, de logements, de restaurants, cafés, etc. et par une profonde relecture de ses espaces publics. Il réorganise les flux de déplacements, tous modes confondus, afin d’accueillir l’intégralité des augmentations programmées du « hub » métropolitain et international de transports autour des deux gares. <br>
+      Les quelques 250.000 m² à construire, dont deux tiers permettront d’offrir de nouvelles réponses aux besoins de l’économie métropolitaine et un tiers accueillera un millier de logements, des commerces et des loisirs, renforceront la place d’Euralille sur l’échiquier national et européen. <br>
+      Le site historique de la MEL, rue du Ballon, à proximité immédiate d’Euralille, va être également l’objet d’un projet urbain ambitieux. La MEL a quitté le site en mars 2020 pour rejoindre le Biotope à proximité du Grand Palais, permettant ainsi le développement du square métropolitain. Ce dernier, projet d’un potentiel de 90.000 m², mêlera logements et bureaux, commerces et services de proximité dans un cadre paysager très attractif.
+    </div>
+  </div>
+
+  <!-- Galerie d'images -->
+  <div class="gallery-container">
+    <!-- Colonne de gauche : Miniatures -->
+    <div class="thumbnail-column">
+      <div class="Title-image">Les projets Euralille 3000</div>
+      <img src="../image/article1/img2.jpg" alt="image 1" class="thumbnail" onclick="showImage('../image/article1/img2.jpg')">
+      <img src="../image/article1/img3.jpg" alt="image 2" class="thumbnail" onclick="showImage('../image/article1/img3.jpg')">
+      <img src="../image/article1/img4.jpg" alt="image 3" class="thumbnail" onclick="showImage('../image/article1/img4.jpg')">
+    </div>
+
+    <!-- Colonne de droite : Image en grand -->
+    <div class="large-image-container">
+      <img id="largeImage" src="../image/article1/img2.jpg" alt="Image en grand">
+    </div>
+  </div>
+
+  <!-- Script pour gérer l'affichage des images -->
+  <script>
+    function showImage(src) {
+      document.getElementById('largeImage').src = src;
+    }
+  </script>
+</body>
+<footer class="footer">
+  <div class="footer-content">
+    <!-- Section de gauche : Informations -->
+    <div class="footer-section">
+      <h3>Métropole Européenne de Lille</h3>
+      <p>&copy; 2025 Métropole Européenne de Lille – Ceci est un exemple</p>
+      <p>Contactez-nous : <a href="mailto:contact@example.com">contact@example.com</a></p>
+    </div>
+
+    <!-- Section du milieu : Liens utiles -->
+    <div class="footer-section">
+      <h3>Liens utiles</h3>
+      <ul>
+        <li><a href="#">Accueil</a></li>
+        <li><a href="#">Actualités</a></li>
+        <li><a href="#">Services</a></li>
+        <li><a href="#">Contact</a></li>
+      </ul>
+    </div>
+
+    <!-- Section de droite : Réseaux sociaux -->
+    <div class="footer-section">
+      <h3>Suivez-nous</h3>
+      <div class="social-icons">
+        <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+        <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+        <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+        <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Barre du bas -->
+  <div class="footer-bottom">
+    <p>Conçu par les étudiants chez Ynov Campus</p>
+  </div>
+</footer>
+</html>

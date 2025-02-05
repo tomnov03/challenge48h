@@ -1,0 +1,123 @@
+/* 🌍 Mise en page principale */
+.container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 20px;
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 20px;
+}
+
+/* 🚲 Liste des stations V'Lille */
+#vlilleInfo {
+    width: 40%;
+    max-width: 450px; /* 🔹 Empêche le débordement */
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    border: 1px solid #ddd;
+    overflow-y: auto;
+    max-height: 600px;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* 🔹 Centre horizontalement */
+    text-align: center; /* 🔹 Centre le texte */
+}
+
+/* 🏷️ Titre */
+#vlilleInfo h3 {
+    text-align: center;
+    font-size: 22px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+/* 🔎 Barre de recherche */
+#searchVlille {
+    width: 90%; /* 🔹 Ajustement pour ne pas coller aux bords */
+    max-width: 400px; /* 🔹 Pour éviter qu'elle soit trop large */
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    outline: none;
+    transition: 0.3s;
+}
+
+#searchVlille:focus {
+    border-color: #007BFF;
+    box-shadow: 0px 0px 8px rgba(0, 123, 255, 0.3);
+}
+
+/* 📋 Liste des stations */
+#vlilleList {
+    width: 80%;
+    max-width: 430px; /* 🔹 Pour empêcher les débordements */
+    list-style: none;
+    padding: 0;
+}
+
+/* 🎨 Style des cartes V'Lille */
+#vlilleList li {
+    background: #f9f9f9;
+    padding: 12px;
+    margin: 8px 0;
+    border-radius: 10px;
+    border-left: 6px solid #007BFF;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 16px;
+    transition: transform 0.2s ease, background 0.3s ease;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    width: 100%; /* 🔹 S'assure que les éléments ne débordent pas */
+    word-wrap: break-word; /* 🔹 Force le retour à la ligne si nécessaire */
+}
+
+#vlilleList li:hover {
+    background: #e0e0e0;
+    transform: scale(1.02);
+}
+
+/* 🔌 Connexion */
+.en-ligne {
+    color: green;
+    font-weight: bold;
+}
+
+.hors-ligne {
+    color: red;
+    font-weight: bold;
+}
+
+/* 🗺️ Carte */
+#map {
+    width: 58%;
+    max-width: 700px; /* 🔹 Empêche la carte d’être trop grande */
+    height: 620px;
+    border-radius: 12px;
+    border: 2px solid #ddd;
+    box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
+    margin-top: 22px;
+}
+
+/* 📱 Responsive */
+@media (max-width: 900px) {
+    .container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    #vlilleInfo {
+        width: 90%;
+        max-width: 500px; /* 🔹 Ajuste la largeur pour mobile */
+    }
+
+    #map {
+        width: 100%;
+    }
+}

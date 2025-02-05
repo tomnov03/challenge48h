@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Réseaux Sociaux des Villes - MEL</title>
+    <link rel="stylesheet" href="../static/style.css">
+    <link rel="stylesheet" href="../static/header.css">
+    <link rel="stylesheet" href="../static/footer.css">
+    <style>
+        #reseauxList {
+            padding: 10px;
+            border: 1px solid #ddd;
+            background: #f9f9f9;
+            margin-top: 20px;
+        }
+        .city-card {
+            padding: 10px;
+            border: 1px solid #ccc;
+            background: white;
+            margin-bottom: 10px;
+        }
+        #searchBar {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="header-container">
+            <div class="logo">
+                <img src="../image/logomel.jpg" alt="Logo de la Métropole Européenne de Lille">
+            </div>
+            <nav>
+                <ul class="nav-menu">
+                  <li><a href="./" class="active">Accueil</a></li>
+                    <li class="dropdown">
+                        <a>Actualité ▾</a>
+                        <ul class="dropdown-menu">
+                            <li><a href="./article1.html">Euralille 3000</a></li>
+                            <li><a href="./article2.html">15 nouvelles rames...</a></li>
+                            <li><a href="./article3.html">Ligne 1 du métro...</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a>Les lignes ▾</a>
+                        <ul class="dropdown-menu">
+                            <li class="subheader">Métro</li>
+                            <li><a href="./ligne1.html">Métro Ligne 1</a></li>
+                            <li><a href="./ligne2.html">Métro Ligne 2</a></li>
+                            <li class="subheader">Bus</li>
+                            <li><a href="./bus.html">En direct</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a>Infos Pratiques ▾</a>
+                        <ul class="dropdown-menu">
+                            <li class="subheader">V'Lille</li>
+                            <li><a href="./vlille.html">Trouver un V'Lille</a></li>
+                            <li class="subheader">Parking</li>
+                            <li><a href="./parkings.html">Trouver une place de parking</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="./contact.html">Contact</a></li>
+                </ul>
+            </nav>
+        </div>
+      </header>
+
+    <h1>Réseaux Sociaux des Villes de la MEL</h1>
+
+    <input type="text" id="searchBar" placeholder="🔍 Rechercher une ville..." onkeyup="filterCities()">
+
+    <div id="reseauxList">Chargement...</div>
+
+    <script>
+        let citiesData = [];
+
+        async function fetchReseauxSociaux() {
+            try {
+                const response = await fetch("/api/reseaux_sociaux");
+                const result = await response.json();
+                citiesData = result.records;
+                
+                displayCities(citiesData);
+            } catch (err) {
+                console.error("❌ Erreur récupération :", err);
+                document.getElementById("reseauxList").innerHTML = "<p>Erreur lors du chargement des données.</p>";
+            }
+        }
+
+        function displayCities(cities) {
+            let reseauxList = document.getElementById("reseauxList");
+            reseauxList.innerHTML = ""; // Reset
+            
+            cities.forEach(ville => {
+                let { nom, site_internet, url_facebook, url_x, url_instagram, url_youtube, numero_de_telephone } = ville;
+                
+                reseauxList.innerHTML += `
+                    <div class="city-card">
+                        <h3>${nom}</h3>
+                        <p>🌍 <a href="${site_internet}" target="_blank">Site Officiel</a></p>
+                        <p>📞 ${numero_de_telephone || "Non disponible"}</p>
+                        <p>
+                            ${url_facebook ? `<a href="${url_facebook}" target="_blank">📘 Facebook</a>` : ""}
+                            ${url_x ? `<a href="${url_x}" target="_blank">🐦 X</a>` : ""}
+                            ${url_instagram ? `<a href="${url_instagram}" target="_blank">📸 Instagram</a>` : ""}
+                            ${url_youtube ? `<a href="${url_youtube}" target="_blank">📺 YouTube</a>` : ""}
+                        </p>
+                    </div>
+                `;
+            });
+        }
+
+        function filterCities() {
+            let query = document.getElementById("searchBar").value.toLowerCase();
+            let filteredCities = citiesData.filter(ville => ville.nom.toLowerCase().includes(query));
+            displayCities(filteredCities);
+        }
+
+        fetchReseauxSociaux();
+    </script>
+
+</body>
+</html>

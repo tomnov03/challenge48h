@@ -1,0 +1,85 @@
+/* 🌍 Mise en page principale */
+.container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 20px;
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 20px;
+}
+
+/* 📋 Liste des parkings */
+#parkingInfo {
+    width: 40%;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 15px;
+    border: 1px solid #ddd;
+    overflow-y: auto;
+    max-height: 550px;
+}
+
+#parkingInfo h3 {
+    text-align: center;
+    font-size: 22px;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+/* 📋 Style de la liste */
+#parkingList {
+    list-style: none;
+    padding: 0;
+}
+
+#parkingList li {
+    background: #f9f9f9;
+    padding: 12px;
+    margin: 5px 0;
+    border-radius: 8px;
+    border-left: 5px solid #007BFF;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 16px;
+    transition: background 0.3s ease;
+}
+
+#parkingList li:hover {
+    background: #e0e0e0;
+}
+
+/* 🟢 🔴 Statut des parkings */
+.ouvert {
+    color: green;
+    font-weight: bold;
+}
+
+.ferme {
+    color: red;
+    font-weight: bold;
+}
+
+/* 🗺️ Carte */
+#map {
+    width: 58%;
+    height: 570px;
+    border-radius: 10px;
+    border: 2px solid #ddd;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+}
+
+/* 📱 Responsive */
+@media (max-width: 900px) {
+    .container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    #parkingInfo, #map {
+        width: 100%;
+    }
+}

@@ -1,0 +1,116 @@
+body{
+  margin: -1px;
+  overflow-x: hidden;
+}
+
+.banner {
+  width: calc(100% - 60px); /* Réduit la largeur de 60px pour laisser 30px de chaque côté */
+  margin: 0 30px; /* Ajoute une marge de 30px à gauche et à droite */
+  border-radius: 50px; /* Ajoute des bords arrondis */
+  overflow: hidden; /* Masque le surplus de l'image */
+  height: 45rem; /* Définit une hauteur fixe pour la bannière */
+  position: relative; /* Permet de positionner l'image correctement */
+}
+
+.banner img {
+  width: 100%; /* L'image occupe toute la largeur de la section .banner */
+  height: 100%; /* L'image occupe toute la hauteur de la section .banner */
+  object-fit: cover; /* Couvre toute la zone sans déformer l'image */
+  display: block; /* Supprime l'espace en dessous de l'image */
+}
+
+/* Section 1 : Texte centré */
+.centered-text {
+  text-align: center; /* Centre le texte horizontalement */
+  margin: 20px 0; /* Ajoute un peu d'espace autour */
+}
+
+.centered-text div {
+  margin: 10px 0; /* Espace entre les lignes de texte */
+}
+
+/* Section 2 : Ronds gris avec texte */
+.circles-section {
+  display: flex;
+  justify-content: space-between; /* Répartit les ronds sur 100% de la largeur */
+  margin: 40px 300px;
+}
+
+.circle-container {
+  text-align: center; /* Centre le texte sous les ronds */
+}
+
+.circle {
+  width: 80px; /* Taille des ronds */
+  height: 80px;
+  background-color: grey; /* Couleur grise */
+  border-radius: 50%; /* Rend le div rond */
+  margin: 0 auto 10px; /* Centre le rond et ajoute un espace en dessous */
+}
+
+.circle-text {
+  font-size: 20px;
+  margin-bottom: 5px; /* Espace entre le texte et le sous-texte */
+}
+
+.circle-subtext {
+  font-size: 17px;
+  color: #666; /* Couleur de texte plus claire */
+}
+
+/* Section 3 : Découvrez nos services */
+.services-section {
+  margin: 40px 200px;
+}
+
+.services-title {
+  font-size: 30px;
+  font-weight: bold;
+  margin-bottom: 60px; /* Espace sous le titre */
+  margin-top: 150px;
+}
+
+.services-container {
+  display: flex;
+  justify-content: space-between; /* Répartit les services sur 100% de la largeur */
+  margin: 0px 70px;
+}
+
+.service {
+  text-align: center;
+  width: 13%; /* Largeur de chaque service */
+  height: 200px;
+  border: 1px solid #0056b3;
+  background-color: #666;
+}
+
+.service img {
+  width: 100%; /* L'image occupe toute la largeur du conteneur */
+  height: 150px; /* Hauteur fixe pour les images */
+  object-fit: cover; /* Couvre la zone sans déformer l'image */
+  border-radius: 10px; /* Bords arrondis pour les images */
+}
+
+.service button {
+  margin-top: 10px; /* Espace entre l'image et le bouton */
+  padding: 10px 20px;
+  background-color: #007bff; /* Couleur du bouton */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.service button:hover {
+  background-color: #0056b3; /* Changement de couleur au survol */
+}
+
+.bienvenue{
+  font-size: 40px;
+  font-weight: bold;
+}
+
+.second {
+  font-size: 20px;
+  font-weight: bold;
+}

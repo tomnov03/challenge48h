@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>En temps réel - V'Lille</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <link rel="stylesheet" href="../static/vlille.css">
+    <link rel="stylesheet" href="../static/header.css">
+    <link rel="stylesheet" href="../static/footer.css">
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <style>
+        #vlilleInfo { padding: 10px; border: 1px solid #ddd; background: #f9f9f9; margin-top: 20px; }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="header-container">
+            <div class="logo">
+                <img src="../image/logomel.jpg" alt="Logo de la Métropole Européenne de Lille">
+            </div>
+            <nav>
+                <ul class="nav-menu">
+                  <li><a href="./" >Accueil</a></li>
+                    <li class="dropdown">
+                        <a>Actualité ▾</a>
+                        <ul class="dropdown-menu">
+                            <li><a href="./article1.html">Euralille 3000</a></li>
+                            <li><a href="./article2.html">15 nouvelles rames...</a></li>
+                            <li><a href="./article3.html">Ligne 1 du métro...</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a>Les lignes ▾</a>
+                        <ul class="dropdown-menu">
+                            <li class="subheader">Métro</li>
+                            <li><a href="./ligne1.html">Métro Ligne 1</a></li>
+                            <li><a href="./ligne2.html">Métro Ligne 2</a></li>
+                            <li class="subheader">Bus</li>
+                            <li><a href="./bus.html">En direct</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a class="active">Infos Pratiques ▾</a>
+                        <ul class="dropdown-menu">
+                            <li class="subheader">V'Lille</li>
+                            <li><a href="./vlille.html">Trouver un V'Lille</a></li>
+                            <li class="subheader">Parking</li>
+                            <li><a href="./parkings.html">Trouver une place de parking</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="./contact.html">Contact</a></li>
+                </ul>
+            </nav>
+        </div>
+      </header>
+      <div class="container">
+        <div id="vlilleInfo">
+            <h3>Stations V'Lille disponibles :</h3>
+            <input type="text" id="searchVlille" placeholder="🔎 Rechercher une station..." onkeyup="filterVlille()">
+            <ul id="vlilleList">Chargement...</ul>
+        </div>
+        <div id="map"></div>
+    </div>
+    
+    <footer class="footer">
+        <div class="footer-content">
+          <!-- Section de gauche : Informations -->
+          <div class="footer-section">
+            <h3>Métropole Européenne de Lille</h3>
+            <p>&copy; 2025 Métropole Européenne de Lille – Ceci est un exemple</p>
+            <p>Contactez-nous : <a href="mailto:contact@example.com">contact@example.com</a></p>
+          </div>
+      
+          <!-- Section du milieu : Liens utiles -->
+          <div class="footer-section">
+            <h3>Liens utiles</h3>
+            <ul>
+              <li><a href="#">Accueil</a></li>
+              <li><a href="#">Actualités</a></li>
+              <li><a href="#">Services</a></li>
+              <li><a href="#">Contact</a></li>
+            </ul>
+          </div>
+      
+          <!-- Section de droite : Réseaux sociaux -->
+          <div class="footer-section">
+            <h3>Suivez-nous</h3>
+            <div class="social-icons">
+              <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+              <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+              <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+              <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+            </div>
+          </div>
+        </div>
+      
+        <!-- Barre du bas -->
+        <div class="footer-bottom">
+          <p>Conçu par les étudiants chez Ynov Campus</p>
+        </div>
+      </footer>
+
+    <script>
+        let map = L.map('map').setView([50.62925, 3.057256], 13);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        let vlilleLayer = L.layerGroup().addTo(map);
+
+        async function fetchVlilleData() {
+    try {
+        const response = await fetch("/api/vlille");
+        const result = await response.json();
+        
+        let vlilleList = document.getElementById("vlilleList");
+        vlilleList.innerHTML = ""; // Réinitialisation
+
+        vlilleLayer.clearLayers();
+
+        result.features.forEach(station => {
+            let { nom, adresse, nb_velos_dispo, nb_places_dispo, etat_connexion } = station.properties;
+            let [lat, lng] = [station.geometry.coordinates[1], station.geometry.coordinates[0]]; // Correction lat/lng
+
+            let markerColor = etat_connexion === "DÉCONNECTÉ" ? "red" : "green";
+            let statusClass = etat_connexion === "DÉCONNECTÉ" ? "hors-ligne" : "en-ligne";
+
+            let marker = L.circleMarker([lat, lng], {
+                color: markerColor,
+                radius: 8,
+                fillOpacity: 0.8
+            }).addTo(vlilleLayer);
+
+            marker.bindPopup(`
+                <strong>${nom}</strong><br>
+                📍 Adresse : ${adresse}<br>
+                🚲 Vélos disponibles : <strong>${nb_velos_dispo}</strong><br>
+                🅿️ Places disponibles : <strong>${nb_places_dispo}</strong><br>
+                🔌 Connexion : <span class="${statusClass}">${etat_connexion}</span>
+            `);
+
+            // Ajout de la station sous forme de carte améliorée 🚲
+            let listItem = document.createElement("li");
+            listItem.innerHTML = `
+                <div>
+                    <span>📍 <strong>${nom}</strong></span><br>
+                    🚲 <span style="font-weight: bold;">${nb_velos_dispo}</span> vélos | 🅿️ <span style="font-weight: bold;">${nb_places_dispo}</span> places
+                </div>
+                <span class="${statusClass}">${etat_connexion}</span>
+            `;
+            listItem.setAttribute("data-name", nom.toLowerCase()); // Stocke le nom en minuscule pour la recherche
+            vlilleList.appendChild(listItem);
+        });
+
+    } catch (err) {
+        console.error("❌ Erreur récupération V'Lille :", err);
+        document.getElementById("vlilleList").innerHTML = "<li>Erreur lors du chargement des données.</li>";
+    }
+}
+
+/**
+ * 🔎 Fonction de filtrage des stations V'Lille par nom
+ */
+function filterVlille() {
+    let searchValue = document.getElementById("searchVlille").value.toLowerCase();
+    let listItems = document.querySelectorAll("#vlilleList li");
+
+    listItems.forEach(item => {
+        let stationName = item.getAttribute("data-name");
+        if (stationName.includes(searchValue)) {
+            item.style.display = "flex"; // Afficher les résultats correspondants
+        } else {
+            item.style.display = "none"; // Masquer les stations qui ne correspondent pas
+        }
+    });
+}
+
+// Chargement des données
+fetchVlilleData();
+setInterval(fetchVlilleData, 30000);
+
+    </script>
+
+</body>
+</html>

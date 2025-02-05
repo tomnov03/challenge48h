@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>En temps réel - Parkings Lille</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <link rel="stylesheet" href="../static/style.css">
+    <link rel="stylesheet" href="../static/header.css">
+    <link rel="stylesheet" href="../static/footer.css">
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <style>
+        #map { width: 100%; height: 500px; margin-bottom: 20px; }
+        #parkingInfo { padding: 10px; border: 1px solid #ddd; background: #f9f9f9; margin-top: 20px; }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="header-container">
+            <div class="logo">
+                <img src="../image/logomel.jpg" alt="Logo de la Métropole Européenne de Lille">
+            </div>
+            <nav>
+                <ul class="nav-menu">
+                  <li><a href="./" class="active">Accueil</a></li>
+                    <li class="dropdown">
+                        <a>Actualité ▾</a>
+                        <ul class="dropdown-menu">
+                            <li><a href="./article1.html">Euralille 3000</a></li>
+                            <li><a href="./article2.html">15 nouvelles rames...</a></li>
+                            <li><a href="./article3.html">Ligne 1 du métro...</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a>Les lignes ▾</a>
+                        <ul class="dropdown-menu">
+                            <li class="subheader">Métro</li>
+                            <li><a href="./ligne1.html">Métro Ligne 1</a></li>
+                            <li><a href="./ligne2.html">Métro Ligne 2</a></li>
+                            <li class="subheader">Bus</li>
+                            <li><a href="./bus.html">En direct</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a>Infos Pratiques ▾</a>
+                        <ul class="dropdown-menu">
+                            <li class="subheader">V'Lille</li>
+                            <li><a href="./vlille.html">Trouver un V'Lille</a></li>
+                            <li class="subheader">Parking</li>
+                            <li><a href="./parkings.html">Trouver une place de parking</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="./contact.html">Contact</a></li>
+                </ul>
+            </nav>
+        </div>
+      </header>
+
+    <h1>Disponibilité des parkings en temps réel</h1>
+
+    <div id="map"></div>
+
+    <div id="parkingInfo">
+        <h3>Parkings disponibles :</h3>
+        <ul id="parkingList">Chargement...</ul>
+    </div>
+
+    <script>
+        let map = L.map('map').setView([50.62925, 3.057256], 13);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        let parkingLayer = L.layerGroup().addTo(map);
+
+        async function fetchParkingData() {
+            try {
+                const response = await fetch("/api/parking");
+                const result = await response.json();
+                
+                let parkingList = document.getElementById("parkingList");
+                parkingList.innerHTML = ""; // Réinitialisation
+
+                parkingLayer.clearLayers();
+
+                result.features.forEach(parking => {
+                    let { nom, adresse, ville, etat, nbr_total, nbr_libre } = parking.properties;
+                    let lat = parking.properties.latitude;
+                    let lng = parking.properties.longitude;
+
+                    let markerColor = etat === "OUVERT" ? "green" : "red";
+
+                    let marker = L.circleMarker([lat, lng], {
+                        color: markerColor,
+                        radius: 8,
+                        fillOpacity: 0.8
+                    }).addTo(parkingLayer);
+
+                    marker.bindPopup(`
+                        <strong>${nom}</strong><br>
+                        📍 Adresse : ${adresse}, ${ville}<br>
+                        🚗 Places disponibles : ${nbr_libre} / ${nbr_total}<br>
+                        🚦 État : ${etat}
+                    `);
+
+                    // Ajout du parking dans la liste sous la map
+                    parkingList.innerHTML += `
+                        <li><strong>${nom}</strong> - 🚗 ${nbr_libre}/${nbr_total} places - ${etat}</li>
+                    `;
+                });
+
+            } catch (err) {
+                console.error("❌ Erreur récupération des parkings :", err);
+                document.getElementById("parkingList").innerHTML = "<li>Erreur lors du chargement des données.</li>";
+            }
+        }
+
+        fetchParkingData();
+        setInterval(fetchParkingData, 30000);
+    </script>
+
+</body>
+</html>

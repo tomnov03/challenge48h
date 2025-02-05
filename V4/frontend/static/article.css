@@ -1,0 +1,85 @@
+/* Style général */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  /* Première image */
+  .main-image-container {
+    width: calc(100% - 60px); /* 100% de largeur moins 60px de chaque côté */
+    margin: 0 30px; /* Ajoute une marge de 30px à gauche et à droite */
+    border-radius: 50px; /* Ajoute des bords arrondis */
+    overflow: hidden; /* Masque le surplus de l'image */
+  height: 45rem; /* Définit une hauteur fixe pour la bannière */
+  position: relative; /* Permet de positionner l'image correctement */
+  }
+  
+  .main-image {
+    width: 100%; /* L'image occupe toute la largeur de la section .banner */
+  height: 100%; /* L'image occupe toute la hauteur de la section .banner */
+  object-fit: cover; /* Couvre toute la zone sans déformer l'image */
+  display: block; /* Supprime l'espace en dessous de l'image */
+  }
+  
+  /* Titre et texte */
+  .content {
+    margin: 20px 60px; /* Décalage vers la droite */
+  }
+  
+  .Title-Article {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+  
+  .First-content-text {
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+  
+  /* Galerie d'images */
+  .gallery-container {
+    display: flex;
+    margin: 20px 60px; /* Décalage vers la droite */
+  }
+  
+  .thumbnail-column {
+    width: 30%; /* Largeur de la colonne des miniatures */
+  }
+  
+  .thumbnail {
+    width: 100%;
+    height: auto;
+    margin-bottom: 10px;
+    cursor: pointer;
+    border: 2px solid #ccc;
+    transition: border-color 0.3s ease;
+  }
+  
+  .thumbnail:hover {
+    border-color: #000;
+  }
+  
+  .large-image-container {
+    margin-top: 38px;
+    width: 70%; /* Largeur de la colonne de l'image en grand */
+    margin-left: 20px; /* Espace entre les colonnes */
+    overflow: hidden; /* Masque le surplus de l'image */
+  height: 51.8rem; /* Définit une hauteur fixe pour la bannière */
+  position: relative; /* Permet de positionner l'image correctement */
+  }
+  
+  #largeImage {
+    width: 100%; /* L'image occupe toute la largeur de la section .banner */
+  height: 100%; /* L'image occupe toute la hauteur de la section .banner */
+  object-fit: cover; /* Couvre toute la zone sans déformer l'image */
+  display: block; /* Supprime l'espace en dessous de l'image */
+  }
+  
+  .Title-image {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }

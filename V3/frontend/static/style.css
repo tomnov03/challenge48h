@@ -1,0 +1,125 @@
+.banner {
+  width: calc(100% - 60px); /* Réduit la largeur de 60px pour laisser 30px de chaque côté */
+  margin: 0px 30px; /* Ajoute une marge de 30px à gauche et à droite */
+  border-radius: 50px; /* Ajoute des bords arrondis */
+  overflow: hidden; /* Masque le surplus de l'image */
+  height: 45rem; /* Définit une hauteur fixe pour la bannière */
+  position: relative; /* Permet de positionner l'image correctement */
+}
+
+.banner img {
+  width: 100%; /* L'image occupe toute la largeur de la section .banner */
+  height: 100%; /* L'image occupe toute la hauteur de la section .banner */
+  object-fit: cover; /* Couvre toute la zone sans déformer l'image */
+  display: block; /* Supprime l'espace en dessous de l'image */
+}
+
+/* Section 1 : Texte centré */
+.centered-text {
+  text-align: center; /* Centre le texte horizontalement */
+  margin: 20px 0; /* Ajoute un peu d'espace autour */
+}
+
+.centered-text div {
+  margin: 10px 0; /* Espace entre les lignes de texte */
+}
+
+/* Section 2 : Ronds gris avec texte */
+.circles-section {
+  display: flex;
+  justify-content: space-between; /* Répartit les ronds sur 100% de la largeur */
+  margin: 40px 300px;
+}
+
+.circle-container {
+  text-align: center; /* Centre le texte sous les ronds */
+}
+
+.circle {
+  width: 80px; /* Taille des ronds */
+  height: 80px;
+  background-color: grey; /* Couleur grise */
+  border-radius: 50%; /* Rend le div rond */
+  margin: 0 auto 10px; /* Centre le rond et ajoute un espace en dessous */
+}
+
+.circle-text {
+  font-size: 20px;
+  margin-bottom: 5px; /* Espace entre le texte et le sous-texte */
+}
+
+.circle-subtext {
+  font-size: 17px;
+  color: #666; /* Couleur de texte plus claire */
+}
+
+/* Section des services */
+.services-section {
+  padding: 50px 20px;
+  background-color: #f9f9f9;
+  text-align: center;
+}
+
+.services-title {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 30px;
+  color: #333;
+}
+
+.services-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+}
+
+/* Carte individuelle */
+.service-card {
+  background: #ffffff;
+  border-radius: 15px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  width: 300px;
+  text-align: center;
+  padding: 20px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.service-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+.service-card img {
+  width: 80px;
+  height: auto;
+  margin-bottom: 20px;
+}
+
+.service-card h3 {
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.service-card p {
+  font-size: 1rem;
+  color: #666;
+  margin-bottom: 20px;
+}
+
+.service-card button {
+  background-color: #ff4b5c;
+  color: #fff;
+  border: none;
+  border-radius: 25px;
+  padding: 10px 20px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.service-card button:hover {
+  background-color: #e63e4e;
+}
